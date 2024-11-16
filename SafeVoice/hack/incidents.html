@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Voice - Incidents</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(90deg, #ff6f91, #ff9671, #ffd166);
+            padding: 20px 0;
+            /* color: white;
+            text-align: center; */
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 20px;
+        }
+
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+            font-size: 28px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .navbar .logo-img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 18px;
+            font-family: 'Nunito', sans-serif;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: #fff;
+            color: #ff6f91;
+            text-decoration: underline;
+            /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
+        }
+        .nav-links a:hover {
+            background-color: #fff;
+            color: #ff6f91;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .map-container {
+            height: 600px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+
+        .safety-measures {
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .measure {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-left: 5px solid #ff6f91;
+        }
+
+        footer {
+            background-color: #0d2436;
+            padding: 40px 0;
+            text-align: center;
+            color: white;
+        }
+
+        .footer-logo {
+            width: 100px;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <img src="logo1.png" alt="Safe Voice Logo" class="logo-img">
+                <span>Safe Voice</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                
+                <li><a href="report.html">Report</a></li>
+                
+                <li><a href="assistance.html">Assistance</a></li>
+                <li><a href="admin.html">Admin login</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="map-container" id="map"></div>
+
+    <section class="safety-measures">
+        <h2>Safety Measures to Take</h2>
+        <div class="measure">Stay Aware: Always be aware of your surroundings and trust your instincts.</div>
+        <div class="measure">Travel in Groups: Whenever possible, travel in groups, especially at night.</div>
+        <div class="measure">Report Suspicious Activity: Immediately report any suspicious activity to local authorities.</div>
+        <div class="measure">Use Safety Apps: Utilize safety apps on your phone for emergency contacts and alerts.</div>
+        <div class="measure">Stay Connected: Keep your phone charged and let someone know your whereabouts.</div>
+    </section>
+
+    <footer>
+        <div>
+            <img src="logo1.png" alt="Logo" class="footer-logo">
+            <p>contact@safewave.com</p>
+            <p>123 Safety St, Safe City, SC 12345</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Create a map centered over India
+        var map = L.map('map').setView([22.5937, 78.9629], 5);
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // GeoJSON Data for India - Replace with your GeoJSON path or object
+        var indiaGeoJSON = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "name": "State 1",
+                        "risk": "high"  // high, moderate, low
+                    },
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [[[78.0, 22.0], [78.5, 22.0], [78.5, 22.5], [78.0, 22.5], [78.0, 22.0]]]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "name": "State 2",
+                        "risk": "moderate"
+                    },
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [[[79.0, 21.0], [79.5, 21.0], [79.5, 21.5], [79.0, 21.5], [79.0, 21.0]]]
+                    }
+                }
+                // Add more states or regions here
+            ]
+        };
+
+        // Function to set color based on risk level
+        function getColor(risk) {
+            switch (risk) {
+                case 'high': return 'red';
+                case 'moderate': return 'orange';
+                case 'low': return 'yellow';
+                default: return '#ffffff';
+            }
+        }
+
+        // Adding GeoJSON layer to the map
+        L.geoJSON(indiaGeoJSON, {
+            style: function(feature) {
+                return { color: getColor(feature.properties.risk), weight: 2, opacity: 0.7 };
+            },
+            onEachFeature: function(feature, layer) {
+                layer.bindPopup(feature.properties.name + ": " + feature.properties.risk);
+            }
+        }).addTo(map);
+    </script>
+</body>
+</html>

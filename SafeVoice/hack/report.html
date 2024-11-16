@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Voice - Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&family=Nunito:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+         body {
+            font-family: 'Quicksand', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fafafa;
+        }
+        header {
+            background: linear-gradient(90deg, #ff6f91, #ff9671, #ffd166);
+            padding: 20px 0;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+            font-size: 28px;
+            color: #fff;
+            font-weight: 600;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 18px;
+            font-family: 'Nunito', sans-serif;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .nav-links a:hover {
+            background-color: #fff;
+            color: #ff6f91;
+        }
+        .report-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .report-container h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #183b56;
+        }
+        .report-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .report-container input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .criticality-slider {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .slider-label {
+            margin-right: 10px;
+        }
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 20px;  /* Increased height for better appearance */
+            border-radius: 10px;
+            background: linear-gradient(to right, #ffd166 0%, #ff9671 50%, #ff6f91 100%);
+            outline: none;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #ff6f91;  /* Border for the thumb for better contrast */
+            cursor: pointer;
+        }
+        .btn-submit, .btn-back, .btn-panic {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 12px;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            transition: background-color 0.3s;
+        }
+        .btn-submit {
+            background-color: #ff6f91;
+        }
+        .btn-submit:hover {
+            background-color: #ff9671;
+        }
+        .btn-back {
+            background-color: #ffd166;
+            color: #183b56;
+        }
+        .btn-back:hover {
+            background-color: #ff9671;
+        }
+        .btn-panic {
+            background-color: #ff3333;
+            font-weight: bold;
+        }
+        .btn-panic:hover {
+            background-color: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <img src="logo1.png" alt="Safe Voice Logo" class="logo-img">
+                <span>Safe Voice</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="report.html">Report</a></li>
+                <li><a href="assistance.html">Assistance</a></li>
+                <li><a href="incidents.html">Incidents</a></li>
+                <li><a href="community.html">Community</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="report-container">
+        <h1>Report Incident</h1>
+        <form id="reportForm">
+            <label for="location">Location of Incident:</label>
+            <input type="text" id="location" placeholder="Detecting your location..." required readonly>
+
+            <div class="criticality-slider">
+                <label class="slider-label" for="criticality">Criticality Level:</label>
+                <input type="range" id="criticality" min="1" max="10" value="5" class="slider" oninput="adjustSlider(this.value)">
+                <span id="criticality-value">10</span>
+            </div>
+
+            <label for="description">Description of Incident (Optional):</label>
+            <input type="text" id="description" rows="4" placeholder="Describe the incident..."></input>
+
+            <button type="button" class="btn-submit" onclick="submitReport()">Submit Report & Get Assistance</button>
+            <button type="button" class="btn-panic" id="panicButton">Panic Button</button>
+            <!-- <button type="button" class="btn-back" onclick="window.location.href='index.html'">Back</button> -->
+        </form>
+    </div>
+
+    <script>
+        function detectLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    document.getElementById('location').value = `Lat: ${latitude}, Lon: ${longitude}`;
+                }, function() {
+                    alert("Unable to retrieve your location. Please enter it manually.");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        detectLocation();
+
+        function submitReport() {
+            const location = document.getElementById('location').value;
+            const criticality = document.getElementById('criticality').value;
+            const description = document.getElementById('description').value;
+
+            const data = {
+                location: location,
+                criticality: criticality,
+                description: description
+            };
+
+            fetch('submit_report.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    window.location.href = 'assistance.html';
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error submitting report. Please check your internet connection.');
+            });
+        }
+
+        function handlePanicButton() {
+            window.location.href = 'assistance.html';
+        }
+
+        document.getElementById('panicButton').addEventListener('click', handlePanicButton);
+    </script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Voice - Admin Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fafafa;
+        }
+        header {
+            background: linear-gradient(90deg, #ff6f91, #ff9671, #ffd166);
+            padding: 20px 0;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+            font-size: 28px;
+            color: #fff;
+            font-weight: 600;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 18px;
+            font-family: 'Quicksand', sans-serif;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .nav-links a:hover {
+            background-color: #fff;
+            color: #ff6f91;
+        }
+        .admin-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .admin-container h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #183b56;
+        }
+        .admin-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .admin-container input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .btn-register, .btn-login {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 12px;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            background-color: #ff6f91;
+            transition: background-color 0.3s;
+        }
+        .btn-register:hover, .btn-login:hover {
+            background-color: #ff9671;
+        }
+        .incident-list {
+            margin-top: 30px;
+        }
+        .incident-item {
+            background: #f8f8f8;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .criticality-high {
+            border-left: 5px solid red;
+        }
+        .criticality-medium {
+            border-left: 5px solid orange;
+        }
+        .criticality-low {
+            border-left: 5px solid green;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <img src="logo1.png" alt="Safe Voice Logo" class="logo-img">
+                <span>Safe Voice</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="report.html">Report</a></li>
+                <li><a href="assistance.html">Assistance</a></li>
+                <li><a href="incidents.html">Incidents</a></li>
+                <li><a href="community.html">Community</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="admin-container">
+        <h1>Admin Dashboard</h1>
+        <form id="adminForm">
+            <label for="adminId">Admin ID:</label>
+            <input type="text" id="adminId" required>
+            
+            <label for="adminCode">Admin Code:</label>
+            <input type="password" id="adminCode" required>
+
+            <button type="button" class="btn-register" onclick="registerAdmin()">Register</button>
+            <button type="button" class="btn-login" onclick="loginAdmin()">Login</button>
+        </form>
+
+        <div class="incident-list" id="incidentList" style="display: none;">
+            <h2>Reported Incidents</h2>
+            <div id="incidents"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2024 Safe Voice Platform. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // Simulate a database
+        const adminDatabase = [];
+        const incidentDatabase = [
+            { id: 1, location: 'Lat: 20.949685, Lon: 79.0263776', criticality: 2, description: 'abuse.' },
+            { id: 2, location: 'Lat: 20.949685, Lon: 79.0263776', criticality: 3, description: 'sexual harrasment.' },
+            { id: 3, location: 'Lat: 20.949685, Lon: 79.0263776', criticality: 5, description: 'verbal harrasment' },
+            { id: 4, location: 'Lat: 20.949685, Lon: 79.0263776', criticality: 7, description: 'domestic voilence' },
+        ];
+
+        function registerAdmin() {
+            const adminId = document.getElementById('adminId').value;
+            const adminCode = document.getElementById('adminCode').value;
+
+            if (adminDatabase.some(admin => admin.id === adminId)) {
+                alert('Admin ID already exists. Please choose a different one.');
+            } else {
+                adminDatabase.push({ id: adminId, code: adminCode });
+                alert('Admin registered successfully!');
+            }
+        }
+
+        function loginAdmin() {
+            const adminId = document.getElementById('adminId').value;
+            const adminCode = document.getElementById('adminCode').value;
+
+            const admin = adminDatabase.find(admin => admin.id === adminId && admin.code === adminCode);
+
+            if (admin) {
+                alert('Login successful!');
+                displayIncidents();
+            } else {
+                alert('Invalid Admin ID or Code. Please try again.');
+            }
+        }
+
+        function displayIncidents() {
+            const incidentList = document.getElementById('incidentList');
+            const incidentsDiv = document.getElementById('incidents');
+            incidentsDiv.innerHTML = ''; // Clear previous incidents
+
+            incidentDatabase.forEach(incident => {
+                const incidentDiv = document.createElement('div');
+                incidentDiv.className = 'incident-item ' + getCriticalityClass(incident.criticality);
+                incidentDiv.innerHTML = `<strong>Location:</strong> ${incident.location} <br>
+                                         <strong>Criticality:</strong> ${incident.criticality} <br>
+                                         <strong>Description:</strong> ${incident.description}`;
+                incidentsDiv.appendChild(incidentDiv);
+            });
+
+            incidentList.style.display = 'block'; // Show incident list
+        }
+
+        function getCriticalityClass(criticality) {
+            if (criticality >= 7) return 'criticality-high';
+            if (criticality >= 4) return 'criticality-medium';
+            return 'criticality-low';
+        }
+    </script>
+</body>
+</html>
